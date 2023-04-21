@@ -4,21 +4,10 @@ const mongoose = require('mongoose');
 const { off } = require('../models/product.js');
 const products   =require("../models/product.js");
 
-
 // Import routes
 
 //Router Middlewares
 app.use(express.json());
-
-
-
-/* Some Example of Type of Query
-
-1. /?limit=5
-2. /?offset=3
-3. /?offset=4&limit=4
-
-*/
 
 
 //default value for limit is 5 and offset is 0
@@ -27,9 +16,21 @@ app.use(express.json());
 
 app.get("/",async function(req,res){
 
+    var limit=req.query.limit,offset=req.query.offset;
+
+    if(limit == null) limit = 5;
+    else limit = parseInt(limit);
+    if(offset == null) offset=0;
+    else offset = parseInt(offset);
+
+    if(limit > 5) limit = 5;
+
+    result = await products.find({});
+
     var ids = [];
-    
-    //Write your Code here.
+    const startt = (limit*offset);
+
+    for(var i = startt; i < result.length && i < (startt+limit) ; i++) ids.push(result[i]["_id"]);
 
     res.send(ids);
 
